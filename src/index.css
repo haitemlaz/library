@@ -1,13 +1,261 @@
+:root {
+  --primary: #2db03a;
+  --hoverColor: #489950;
+  --primaryBackgroundColor: #dbd7d7;
+  --secondaryBackgroundColor: #504e4e;
+}
 body {
+  background-color: #dcdcdc;
+  min-height: 100vh;
+
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.books {
+  list-style: none;
+  display: grid;
+  /* grid-template-columns: repeat(5, 1fr); */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+  gap: 4rem;
+  row-gap: 2rem;
+  background-color: var(--secondaryBackgroundColor);
+  width: 90%;
+  max-width: 1000px;
+  min-height: 500px;
+  /* position: absolute; */
+  /* top: 10vh;
+  left: 5vw; */
+
+  margin: 0vh auto;
+  padding: 20px;
+}
+.book {
+  /* box-shadow: 2px 2px; */
+  font-family: sans-serif;
+  /* min-width: 100px; */
+  max-width: 200px;
+  max-height: 400px;
+  min-height: 300px;
+  padding: 5px;
+  background-color: var(--primaryBackgroundColor);
+  border-radius: 5%;
+  flex-direction: column;
+  display: flex;
+  gap: 0.3rem;
+  position: relative;
+  /* justify-content: center; Center horizontally */
+  align-items: center;
+}
+.book:hover {
+  box-shadow: 2px 2px;
+}
+.cover {
+  height: 80%;
+  width: 100%;
+  top: 2%;
+}
+.book img {
+  /* max-height: 30px; */
+  /* position: relative; */
+  /* top: 5%; */
+  /* top: em; */
+  width: 100%;
+  border-radius: 5%;
+  height: 100%;
+  object-fit: cover;
+  /* position: absolute;
+  top: 0; */
+  /* align-self: start; */
+
+  /* height: 100%; */
+
+  /* height: 60%; */
+}
+
+.delete {
+  position: absolute; /* Position it relative to the parent */
+  top: 0.35em; /* Adjust to align better with the corner */
+  right: 0.3em;
+  width: 12%;
+  background-color: var(--primaryBackgroundColor);
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-bottom-left-radius: 50%;
+  transition: 0.3s;
+}
+.delete:hover {
+  width: 15%;
+  height: 1.5em;
+}
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.delete:hover {
+  background-color: var(--primary);
+  text-shadow: #504e4e;
+}
+h3 {
+  margin: 0;
+}
+.pages {
+  min-width: 65%;
+  max-width: 90%;
+}
+
+.pages,
+.details {
+  background-color: var(--primary);
+  border-radius: 40cap;
+  color: white;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+.details:hover {
+  background-color: var(--hoverColor);
+}
+.bar,
+.progress {
+  position: relative;
+  height: 0.4rem;
+  border-radius: 25px;
+}
+.bar {
+  bottom: 1rem;
+  left: 0.25rem;
+  width: 95%;
+  background-color: white;
+}
+
+.progress {
+  background-color: var(--primary);
+}
+
+.circle {
+  position: absolute; /* Absolute positioning relative to parent */
+  top: 50%; /* Center vertically */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100px; /* Fixed height */
+  width: 100px; /* Fixed width */
+  background-color: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.circle:hover {
+  transform: translate(-55px, -55px); /* Adjust the translation as needed */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.hor {
+  position: relative;
+  height: 5%;
+  background-color: var(--primaryBackgroundColor);
+  width: 60%;
+  top: 50%;
+  left: 20%;
+}
+.ver {
+  position: relative;
+  height: 60%;
+  background-color: var(--primaryBackgroundColor);
+  width: 5%;
+  left: 48%;
+  top: 17%;
+}
+.addBook {
+  width: 50%;
+  min-height: 30vh;
+  background-color: var(--secondaryBackgroundColor);
+  position: fixed;
+  top: 40vh;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  z-index: 99;
+}
+
+.addBook .searchBar {
+  /* width: 100%; */
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid var(--primary);
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.addBook .searchBar:focus {
+  border-color: var(--hoverColor);
+}
+
+.addBook .results {
+  background-color: var(--primaryBackgroundColor);
+  border-radius: 5px;
+  padding: 10px;
+  height: 200px;
+  overflow-y: auto;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result {
+  margin: 0;
+  padding: 5px;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  transition-duration: 0.3s;
+  margin: 1%;
+}
+.result:hover {
+  background-color: var(--hoverColor);
+  cursor: pointer;
+}
+
+.btns {
+  padding-inline: 70px;
+  /* position: absolute; */
+  bottom: 10px;
+  display: inline-flex;
+  gap: 100px;
+}
+.btns button {
+  width: 80px;
+  height: 35px;
+  background-color: var(--primary);
+  border-radius: 40cap;
+  color: white;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+.btns button:hover {
+  background-color: var(--hoverColor);
 }

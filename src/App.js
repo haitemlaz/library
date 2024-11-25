@@ -103,6 +103,7 @@ export default function App() {
   // const [BookList, setBookList] = useState([]);
   const [isAddBook, setIsAddBook] = useState(false);
   function handleAddBook(book) {
+    book = { ...book, pagesRead: 0 };
     setBookList((bookList) =>
       bookList.some((oldBook) => oldBook.id === book.id)
         ? bookList
@@ -143,7 +144,10 @@ function Books({ books, handleSetBookList, setAddbook, children }) {
 }
 
 ///////////////////            Book              //////////////////////
+
 function Book({ book, handleSetBookList, handleDeleteBook }) {
+  // add pagesRead to the book object
+
   function onSetPage(page) {
     handleSetBookList((books) =>
       books.map((item) =>

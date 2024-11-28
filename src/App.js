@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRegular, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useLocalStorage } from "./useLocalStorage";
 
 //   Staff to add :
@@ -21,27 +23,30 @@ export default function App() {
   }
 
   return (
-    <div className="wrapper">
-      {isAddBook && (
-        <AddBook setAddbook={setIsAddBook} handleAddBook={handleAddBook} />
-      )}
-      {/* <Books
-        books={BookList}
-        handleSetBookList={setBookList}
-        setAddbook={setIsAddBook}
-      /> */}
-      <Books>
-        {BookList.map((book) => (
-          <Book
-            key={book.id}
-            book={book}
-            handleSetBookList={setBookList}
-            handleDeleteBook={handleDeleteBook}
-          />
-        ))}
-        <AddBtn setIsAddBook={setIsAddBook} />
-      </Books>
-    </div>
+    <>
+      <Header />
+      <div className="wrapper">
+        {isAddBook && (
+          <AddBook setAddbook={setIsAddBook} handleAddBook={handleAddBook} />
+        )}
+        {/* <Books
+      books={BookList}
+      handleSetBookList={setBookList}
+      setAddbook={setIsAddBook}
+    /> */}
+        <Books>
+          {BookList.map((book) => (
+            <Book
+              key={book.id}
+              book={book}
+              handleSetBookList={setBookList}
+              handleDeleteBook={handleDeleteBook}
+            />
+          ))}
+          <AddBtn setIsAddBook={setIsAddBook} />
+        </Books>
+      </div>
+    </>
   );
 }
 ///////////////////            Books              //////////////////////
@@ -154,5 +159,18 @@ function BookSuggestion({ book, handleAddBook }) {
     <div className="result" onClick={() => handleAddBook(book)}>
       {book.volumeInfo.title}
     </div>
+  );
+}
+function Header() {
+  return (
+    <header className="header">
+      <div className="logo">
+        <img src={"logo.png"} alt="Logo" />
+      </div>
+      <input type="text" className="search-bar" placeholder="Search..." />
+      <div className="user-profile">
+        <FontAwesomeIcon icon={faUser} />
+      </div>
+    </header>
   );
 }

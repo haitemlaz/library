@@ -24,7 +24,7 @@ export default function App() {
 
   return (
     <>
-      <Header />
+      <Header handleAddBook={handleAddBook} />
       <div className="wrapper">
         {isAddBook && (
           <AddBook setAddbook={setIsAddBook} handleAddBook={handleAddBook} />
@@ -161,13 +161,43 @@ function BookSuggestion({ book, handleAddBook }) {
     </div>
   );
 }
-function Header() {
+function Header({ setAddbook, handleAddBook }) {
+  const [query, setQuery] = useState(null);
+  const [searchList, setSearchList] = useState([]);
+  useEffect(
+    function () {
+      async function fetchBooks() {
+        if (!query) return;
+        const res = await fetch(
+          `https://www.googleapis.com/books/v1/volumes?q=${query}&langRestrict=en&key=AIzaSyA2gENVhW8QJhj4P2mfMbVImrf1FCvTpwQ`
+        );
+        const data = await res.json();
+
+        setSearchList(data.items);
+      }
+      fetchBooks();
+    },
+    [query]
+  );
   return (
     <header className="header">
       <div className="logo">
         <img src={"logo.png"} alt="Logo" />
       </div>
-      <input type="text" className="search-bar" placeholder="Search..." />
+      <input
+        type="text"
+        className="search-bar"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {query ? (
+        <div className="Searchresults">
+          {searchList.map((e, i) => (
+            <BookSuggestion book={e} key={i} handleAddBook={handleAddBook} />
+          ))}
+        </div>
+      ) : null}
       <div className="user-profile">
         <FontAwesomeIcon icon={faUser} />
       </div>

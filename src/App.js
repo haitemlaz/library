@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRegular, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useLocalStorage } from "./useLocalStorage";
 
 //   Staff to add :
@@ -21,26 +23,29 @@ export default function App() {
   }
 
   return (
-    <div className="wrapper">
-      {isAddBook && (
-        <AddBook setAddbook={setIsAddBook} handleAddBook={handleAddBook} />
-      )}
-      {/* <Books
-        books={BookList}
-        handleSetBookList={setBookList}
-        setAddbook={setIsAddBook}
-      /> */}
-      <Books>
-        {BookList.map((book) => (
-          <Book
-            key={book.id}
-            book={book}
-            handleSetBookList={setBookList}
-            handleDeleteBook={handleDeleteBook}
-          />
-        ))}
-        <AddBtn setIsAddBook={setIsAddBook} />
-      </Books>
+    <div onClick={() => setIsAddBook(false)}>
+      <Header handleAddBook={handleAddBook} />
+      <div className="wrapper">
+        {isAddBook && (
+          <AddBook setAddbook={setIsAddBook} handleAddBook={handleAddBook} />
+        )}
+        {/* <Books
+      books={BookList}
+      handleSetBookList={setBookList}
+      setAddbook={setIsAddBook}
+    /> */}
+        <Books>
+          {BookList.map((book) => (
+            <Book
+              key={book.id}
+              book={book}
+              handleSetBookList={setBookList}
+              handleDeleteBook={handleDeleteBook}
+            />
+          ))}
+          <AddBtn setIsAddBook={setIsAddBook} />
+        </Books>
+      </div>
     </div>
   );
 }
@@ -103,7 +108,7 @@ function Book({ book, handleSetBookList, handleDeleteBook }) {
 ///////////////////            Add              //////////////////////
 function AddBtn({ setIsAddBook }) {
   return (
-    <li className="book">
+    <li className="book" onClick={(e) => e.stopPropagation()}>
       <div className="circle" onClick={() => setIsAddBook(true)}>
         <div className="hor"></div>
         <div className="ver"></div>
@@ -131,7 +136,7 @@ function AddBook({ setAddbook, handleAddBook }) {
     [query]
   );
   return (
-    <div className="addBook">
+    <div className="addBook" onClick={(e) => e.stopPropagation()}>
       <input
         type="text"
         className="searchBar"
@@ -149,10 +154,57 @@ function AddBook({ setAddbook, handleAddBook }) {
     </div>
   );
 }
+function Results() {
+  return <div className="results"></div>;
+}
+
 function BookSuggestion({ book, handleAddBook }) {
   return (
     <div className="result" onClick={() => handleAddBook(book)}>
       {book.volumeInfo.title}
     </div>
+  );
+}
+function Header({ setAddbook, handleAddBook }) {
+  const [query, setQuery] = useState(null);
+  const [searchList, setSearchList] = useState([]);
+  useEffect(
+    function () {
+      async function fetchBooks() {
+        if (!query) return;
+        const res = await fetch(
+          `https://www.googleapis.com/books/v1/volumes?q=${query}&langRestrict=en&key=AIzaSyA2gENVhW8QJhj4P2mfMbVImrf1FCvTpwQ`
+        );
+        const data = await res.json();
+
+        setSearchList(data.items);
+      }
+      fetchBooks();
+    },
+    [query]
+  );
+  return (
+    <header className="header">
+      <div className="logo">
+        <img src={"logo.png"} alt="Logo" />
+      </div>
+      <input
+        type="text"
+        className="search-bar"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {query ? (
+        <div className="Searchresults">
+          {searchList.map((e, i) => (
+            <BookSuggestion book={e} key={i} handleAddBook={handleAddBook} />
+          ))}
+        </div>
+      ) : null}
+      <div className="user-profile">
+        <FontAwesomeIcon icon={faUser} />
+      </div>
+    </header>
   );
 }

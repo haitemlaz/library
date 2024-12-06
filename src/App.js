@@ -23,7 +23,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <div onClick={() => setIsAddBook(false)}>
       <Header handleAddBook={handleAddBook} />
       <div className="wrapper">
         {isAddBook && (
@@ -46,7 +46,7 @@ export default function App() {
           <AddBtn setIsAddBook={setIsAddBook} />
         </Books>
       </div>
-    </>
+    </div>
   );
 }
 ///////////////////            Books              //////////////////////
@@ -108,7 +108,7 @@ function Book({ book, handleSetBookList, handleDeleteBook }) {
 ///////////////////            Add              //////////////////////
 function AddBtn({ setIsAddBook }) {
   return (
-    <li className="book">
+    <li className="book" onClick={(e) => e.stopPropagation()}>
       <div className="circle" onClick={() => setIsAddBook(true)}>
         <div className="hor"></div>
         <div className="ver"></div>
@@ -136,7 +136,7 @@ function AddBook({ setAddbook, handleAddBook }) {
     [query]
   );
   return (
-    <div className="addBook">
+    <div className="addBook" onClick={(e) => e.stopPropagation()}>
       <input
         type="text"
         className="searchBar"
@@ -154,6 +154,10 @@ function AddBook({ setAddbook, handleAddBook }) {
     </div>
   );
 }
+function Results() {
+  return <div className="results"></div>;
+}
+
 function BookSuggestion({ book, handleAddBook }) {
   return (
     <div className="result" onClick={() => handleAddBook(book)}>

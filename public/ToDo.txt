@@ -1,0 +1,5 @@
+add button for more suggestions 
+a div to confirm adding a new book 
+the div ask the number of pages read 
+put the page by number
+add a gradient background 

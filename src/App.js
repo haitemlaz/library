@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRegular, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useLocalStorage } from "./useLocalStorage";
@@ -57,14 +57,43 @@ function Books({ books, handleSetBookList, setAddbook, children }) {
 ///////////////////            Book              //////////////////////
 
 function Book({ book, handleSetBookList, handleDeleteBook }) {
+  const [isPagesInput, setIsPagesInput] = useState(false);
+
+  const pagesInputRef = useRef(null);
+
+  // function handleIsPagesInput(number) {
+  //   setIsPagesInput((pagesRead) =>
+  //     number < book.volumeInfo.pageCount ? number : pagesRead
+  //   );
+  // }
   // add pagesRead to the book object
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        pagesInputRef.current &&
+        !pagesInputRef.current.contains(event.target)
+      ) {
+        setIsPagesInput(false);
+      }
+    }
+    if (isPagesInput) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isPagesInput]);
 
   function onSetPage(page) {
-    handleSetBookList((books) =>
-      books.map((item) =>
-        book.id === item.id ? { ...item, pagesRead: page } : item
-      )
-    );
+    if (page < book.volumeInfo.pageCount) {
+      handleSetBookList((books) =>
+        books.map((item) =>
+          book.id === item.id ? { ...item, pagesRead: page } : item
+        )
+      );
+    }
   }
   const { id, title, nbrOfPages, thumbnail } = {};
 
@@ -86,20 +115,24 @@ function Book({ book, handleSetBookList, handleDeleteBook }) {
       </div>
       <div className="info">
         <h3 style={{ textAlign: "center" }}>{book.volumeInfo.title}</h3>
-        <select
-          className="pages"
-          value={book.pagesRead}
-          onChange={(e) => onSetPage(e.target.value)}
-        >
-          {Array.from(
-            { length: book.volumeInfo.pageCount },
-            (_, i) => i + 1
-          ).map((page) => (
-            <option value={page} key={page}>
-              {page + " / " + book.volumeInfo.pageCount} Pages
-            </option>
-          ))}
-        </select>
+        {isPagesInput ? (
+          <div className="pages">
+            <input
+              ref={pagesInputRef}
+              type="range"
+              min="0"
+              max={book.volumeInfo.pageCount}
+              value={book.pagesRead}
+              onChange={(e) => onSetPage(Number(e.target.value))}
+            />
+            <div>{`${book.pagesRead} / ${book.volumeInfo.pageCount}`}</div>
+          </div>
+        ) : (
+          <div className="pages" onClick={() => setIsPagesInput(true)}>
+            {`${book.pagesRead} / ${book.volumeInfo.pageCount}`}
+          </div>
+        )}
+
         <button className="details">Details</button>
       </div>
     </li>
@@ -166,8 +199,29 @@ function BookSuggestion({ book, handleAddBook }) {
   );
 }
 function Header({ setAddbook, handleAddBook }) {
-  const [query, setQuery] = useState(null);
+  const [query, setQuery] = useState("");
   const [searchList, setSearchList] = useState([]);
+  const [isSearchResults, setIsSearchResults] = useState(
+    SearchInputRef.current == document.activeElement
+  );
+  const SearchResultsRef = useRef(null);
+  const SearchInputRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        SearchResultsRef.current &&
+        !SearchResultsRef.current.contains(event.target)
+      ) {
+        // setQuery("");
+        setIsSearchResults(false);
+      }
+    }
+    if (query) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [query]);
   useEffect(
     function () {
       async function fetchBooks() {
@@ -189,14 +243,15 @@ function Header({ setAddbook, handleAddBook }) {
         <img src={"logo.png"} alt="Logo" />
       </div>
       <input
+        ref={SearchInputRef}
         type="text"
         className="search-bar"
         placeholder="Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {query ? (
-        <div className="Searchresults">
+      {query && isSearchResults ? (
+        <div className="Searchresults" ref={SearchResultsRef}>
           {searchList.map((e, i) => (
             <BookSuggestion book={e} key={i} handleAddBook={handleAddBook} />
           ))}

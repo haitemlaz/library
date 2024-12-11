@@ -201,27 +201,43 @@ function BookSuggestion({ book, handleAddBook }) {
 function Header({ setAddbook, handleAddBook }) {
   const [query, setQuery] = useState("");
   const [searchList, setSearchList] = useState([]);
-  const [isSearchResults, setIsSearchResults] = useState(
-    SearchInputRef.current == document.activeElement
-  );
+  const [isSearchResults, setIsSearchResults] = useState(true);
   const SearchResultsRef = useRef(null);
   const SearchInputRef = useRef(null);
   useEffect(() => {
+    // if (SearchInputRef.current === document.activeElement) {
+    //   console.log("focus");
+    //   setIsSearchResults(true);
+    // }
     function handleClickOutside(event) {
+      console.log("target", event.target);
+      console.log("SearchInput", SearchInputRef.current);
       if (
         SearchResultsRef.current &&
-        !SearchResultsRef.current.contains(event.target)
+        !SearchResultsRef.current.contains(event.target) &&
+        SearchInputRef.current &&
+        !SearchInputRef.current.contains(event.target)
       ) {
         // setQuery("");
         setIsSearchResults(false);
       }
     }
+
     if (query) {
       document.addEventListener("mousedown", handleClickOutside);
+      SearchInputRef.current.addEventListener("focus", () =>
+        setIsSearchResults(true)
+      );
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
+      SearchInputRef.current.removeEventListener("focus", () =>
+        setIsSearchResults(true)
+      );
     }
-  }, [query]);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [query, SearchInputRef]);
   useEffect(
     function () {
       async function fetchBooks() {
@@ -248,7 +264,10 @@ function Header({ setAddbook, handleAddBook }) {
         className="search-bar"
         placeholder="Search..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setIsSearchResults(true);
+        }}
       />
       {query && isSearchResults ? (
         <div className="Searchresults" ref={SearchResultsRef}>

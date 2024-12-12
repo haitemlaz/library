@@ -284,6 +284,10 @@ function Header({ setAddbook, handleAddBook }) {
               <button onClick={() => setListSize((size) => size + 10)}>
                 show more
               </button>
+
+              {ListSize > 10 && (
+                <button onClick={() => setListSize(10)}>show less</button>
+              )}
             </>
           ) : (
             <div>no results</div>

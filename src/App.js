@@ -87,7 +87,7 @@ function Book({ book, handleSetBookList, handleDeleteBook }) {
   }, [isPagesInput]);
 
   function onSetPage(page) {
-    if (page < book.volumeInfo.pageCount) {
+    if (page <= book.volumeInfo.pageCount) {
       handleSetBookList((books) =>
         books.map((item) =>
           book.id === item.id ? { ...item, pagesRead: page } : item
@@ -100,7 +100,7 @@ function Book({ book, handleSetBookList, handleDeleteBook }) {
   return (
     <li className="book">
       <div className="cover">
-        <img alt="pic" src={book.volumeInfo.imageLinks.thumbnail} />
+        <img alt="pic" src={book.volumeInfo.imageLinks?.thumbnail} />
         <button className="delete" onClick={() => handleDeleteBook(book)}>
           X
         </button>
@@ -202,6 +202,7 @@ function Header({ setAddbook, handleAddBook }) {
   const [query, setQuery] = useState("");
   const [searchList, setSearchList] = useState([]);
   const [isSearchResults, setIsSearchResults] = useState(true);
+  const [ListSize, setListSize] = useState(10);
   const SearchResultsRef = useRef(null);
   const SearchInputRef = useRef(null);
   useEffect(() => {
@@ -243,7 +244,7 @@ function Header({ setAddbook, handleAddBook }) {
       async function fetchBooks() {
         if (!query) return;
         const res = await fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=${query}&langRestrict=en&key=AIzaSyA2gENVhW8QJhj4P2mfMbVImrf1FCvTpwQ`
+          `https://www.googleapis.com/books/v1/volumes?q=${query}+intitle:${query}&maxResults=${ListSize}&langRestrict=en&key=AIzaSyA2gENVhW8QJhj4P2mfMbVImrf1FCvTpwQ`
         );
         const data = await res.json();
 
@@ -251,7 +252,7 @@ function Header({ setAddbook, handleAddBook }) {
       }
       fetchBooks();
     },
-    [query]
+    [query, ListSize]
   );
   return (
     <header className="header">
@@ -271,9 +272,22 @@ function Header({ setAddbook, handleAddBook }) {
       />
       {query && isSearchResults ? (
         <div className="Searchresults" ref={SearchResultsRef}>
-          {searchList.map((e, i) => (
-            <BookSuggestion book={e} key={i} handleAddBook={handleAddBook} />
-          ))}
+          {searchList ? (
+            <>
+              {searchList.map((e, i) => (
+                <BookSuggestion
+                  book={e}
+                  key={i}
+                  handleAddBook={handleAddBook}
+                />
+              ))}
+              <button onClick={() => setListSize((size) => size + 10)}>
+                show more
+              </button>
+            </>
+          ) : (
+            <div>no results</div>
+          )}
         </div>
       ) : null}
       <div className="user-profile">
